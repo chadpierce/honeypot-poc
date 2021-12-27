@@ -63,7 +63,7 @@ func handleConnection(conn net.Conn, detail bool) {
 	data := make([]byte, 4096)
 	n, err := conn.Read(data)
 	if err != nil {
-		log.Println("ERROR handle conn", err)
+		log.Println("ERROR handle conn", err, "R:", conn.RemoteAddr().String(), "L:", conn.LocalAddr().String(), "DATA:" data[:n])
 		conn.Close()
 		return
 	}
