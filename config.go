@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	LOG Logfile	 `json:"logfile"`
+	LOGS Logs	 `json:"logs"`
 	TCP TCP      `json:"tcp"`
 	//UDP UDP		 `json:"udp"`
 }
@@ -20,9 +20,8 @@ type TCP struct {
 // 	Ports []string `json:"ports"`
 // }
 
-type Logfile struct {
+type Logs struct {
 	Enabled bool `json:"enabled"`
-	Path string `json:"path"`
 	Detailed bool `json:"detail"`
 }
 

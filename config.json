@@ -1,8 +1,7 @@
 {
-    "logfile": {
-        "enabled": false,
-        "path": "./log.txt",
-        "detail": false
+    "logs": {
+        "enabled": true,
+        "detail": true
     },
     "tcp": {
         "ports": [

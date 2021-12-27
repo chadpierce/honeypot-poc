@@ -8,29 +8,17 @@ import (
 	"encoding/base64"
 	"strings"
 	"os"
+	"time"
 )
 
-// Server is the tcp server struct
 type Server struct {
 	Ports []string
 	DetailedLogging bool
 }
 
 func encode64(decodedString string) string {
-	// if isBase64 == false {
-	// 	return decodedString
-	// }
 	var encodedString = base64.StdEncoding.EncodeToString([]byte(decodedString))
 	return encodedString
-}
-
-func decode64(encodedString string) string {
-	// if isBase64 == false {
-	// 	return encodedString
-	// }
-	var decodedByte, _ = base64.StdEncoding.DecodeString(encodedString)
-	var decodedString = string(decodedByte)
-	return decodedString
 }
 
 func getIPLogFileName(remoteAddr string) string {
@@ -51,7 +39,7 @@ func (t *Server) Start() {
 	wg.Add(len(t.Ports))
 	for _, port := range t.Ports {
 		go func(port string, wg *sync.WaitGroup) {
-			log.Println("TCP SERVER STARTED ON PORT:", port)
+			log.Println("TCP SERVER STARTED: PORT", port)
 			listen, err := net.Listen("tcp", ":"+port)
 			if err != nil {
 				log.Println("ERROR port listener: ", err)
@@ -91,23 +79,24 @@ func handleConnection(conn net.Conn, detail bool) {
 		log.Println("ERROR parse local host:", err)
 		return
 	}
-	// TODO fix log output
-	// TODO how to format detailed output data
-	// TODO path should be taken from config
-	// FIXME why does data have trailing A's without using data[:n]
-	log.Println("CONNECTION:", RHost, RPort, LHost, LPort, n, encode64(string(data[:n])))
+	// log format: timestamp CONNECTION: dest port, remoteIP, remote port, local ip, req len, base64 encoded data
+	log.Println("CONNECTION:", LPort, RHost, RPort, LHost, n, encode64(string(data[:n])))
 	if detail == true {
-		detailedOutput := "DETAILED STUFF GOES HERE\n"
-		//log.Println("DETAILED LOGGING TRUE")
-		fname := getIPLogFileName(RHost)
-		f, err := os.OpenFile(fname, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+		detailedOutput := "Timestamp: " + time.Now().Format(time.RFC3339) + "\n"
+		detailedOutput += "Remote: " + RHost + ":" + RPort + "\n"
+		detailedOutput += "Local: " + LHost + ":" + LPort + "\n"
+		detailedOutput += "Port: " + LPort + "\n"
+		detailedOutput += "Data:\n" + string(data[:n])
+		detailedOutput += "==========================================\n"
+		fname := detailLogPath + "/" + getIPLogFileName(RHost)
+		f, err := os.OpenFile(fname, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		if err != nil {
 			log.Println("ERROR opening or creating detailed logfile for", RHost, err)
 		} else {
 			if _, err = f.WriteString(detailedOutput); err != nil {
 				log.Println("ERROR writing to logfile for", RHost, err)
 			} else {
-				log.Println("Detailed log written for", RHost)
+				log.Println("Detailed log written for", RHost, fname)
 			}
 		}
 		defer f.Close()
