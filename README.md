@@ -1,2 +1,8 @@
 # honeypot-poc
-POC Honeypot written in Go
+
+Honeypot written in Go
+
+## Features
+
+- Don't know yet
+

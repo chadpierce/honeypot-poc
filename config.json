@@ -1,0 +1,12 @@
+{
+    "logfile": {
+        "enabled": false,
+        "path": "./log.txt",
+        "detail": false
+    },
+    "tcp": {
+        "ports": [
+            "8080", "4444"
+        ]
+    }
+}
