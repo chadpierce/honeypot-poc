@@ -87,7 +87,7 @@ func handleConnection(conn net.Conn, detail bool) {
 		detailedOutput += "Local: " + LHost + ":" + LPort + "\n"
 		detailedOutput += "Port: " + LPort + "\n"
 		detailedOutput += "Data:\n" + string(data[:n])
-		detailedOutput += "==========================================\n"
+		detailedOutput += "\n==========================================\n"
 		fname := detailLogPath + "/" + getIPLogFileName(RHost)
 		f, err := os.OpenFile(fname, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		if err != nil {
